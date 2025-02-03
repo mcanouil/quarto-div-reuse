@@ -31,18 +31,17 @@ function collect_divs(el)
   return el
 end
 
-local function update_identifiers(content, ref_id)
-  local identifier_modified = 0
+local function find_identifiers(content, ref_id)
+  local identifier_found = 0
   for _, inner_el in ipairs(content) do
     if inner_el.t == "Div" and inner_el.identifier ~= "" then
-      inner_el.identifier = inner_el.identifier .. "-" .. div_contents[ref_id .. "-count"]
-      identifier_modified = identifier_modified + 1
+      identifier_found = identifier_found + 1
     end
     if inner_el.content then
-      identifier_modified = identifier_modified + update_identifiers(inner_el.content, ref_id)
+      identifier_found = identifier_found + find_identifiers(inner_el.content, ref_id)
     end
   end
-  return identifier_modified
+  return identifier_found
 end
 
 function replace_divs(el)
@@ -55,13 +54,12 @@ function replace_divs(el)
       end
       div_contents[ref_id .. "-count"] = div_contents[ref_id .. "-count"] + 1
 
-      local modified_count = update_identifiers(el.content, ref_id)
-      if modified_count > 0 then
+      local total_identifiers = find_identifiers(el.content, ref_id)
+      if total_identifiers > 0 then
         quarto.log.warning(
           '[div-reuse] Div "' ..
           ref_id ..
-          '" has been reused but contains ' .. modified_count .. ' Div(s) with an identifier.',
-          'The identifier(s) have been incremented.'
+          '" has been reused but contains ' .. total_identifiers .. ' Div(s) with an identifier.'
         )
       end
     end
