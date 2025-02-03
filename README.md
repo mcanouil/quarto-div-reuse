@@ -20,6 +20,29 @@ filters:
   - div-reuse
 ```
 
+Then, you can reuse any fenced div by using their ID in the following way:
+
+```markdown
+## Original Div
+
+::: {#my-div}
+{{< lipsum >}}
+:::
+
+## Reused Div
+
+::: {reuse="my-div"}
+:::
+```
+
+> [!IMPORTANT]
+> The "reuse" attribute acts like a copy-paste of the original `div` content.
+> Consequently, content and their attributes, including the ID, are duplicated.
+> This can result in unexpected behaviour if the same ID is used multiple times within the same document.
+> To prevent this, the extension automatically appends a unique suffix to the reused `div` ID, but this can still lead to unexpected cross-reference issues as only `div` IDs are modified.
+>
+> Therefore, it is recommended to use the "reuse" attribute primarily with text content.
+
 ## Example
 
 Here is the source code for a minimal example: [example.qmd](example.qmd).
