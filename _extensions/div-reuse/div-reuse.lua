@@ -49,11 +49,6 @@ function replace_divs(el)
     local ref_id = el.attributes["reuse"]
     if div_contents[ref_id] then
       el.content = div_contents[ref_id]
-      if not div_contents[ref_id .. "-count"] then
-        div_contents[ref_id .. "-count"] = 1
-      end
-      div_contents[ref_id .. "-count"] = div_contents[ref_id .. "-count"] + 1
-
       local total_identifiers = find_identifiers(el.content, ref_id)
       if total_identifiers > 0 then
         quarto.log.warning(
