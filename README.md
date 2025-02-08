@@ -20,6 +20,14 @@ filters:
   - div-reuse
 ```
 
+If you plan to reuse content processed by Quarto, such as cross-referenced content, make sure the filter is applied last.
+
+```yaml
+filters:
+  - quarto
+  - div-reuse
+```
+
 Then, you can reuse any fenced div by using their ID in the following way:
 
 ```markdown
