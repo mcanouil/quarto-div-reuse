@@ -13,20 +13,23 @@ If you're using version control, you will want to check in this directory.
 
 ## Using
 
-To use the extension, add the following to your document's front matter:
+To activate the filter, add the following to your YAML front matter:
 
-```yaml
-filters:
-  - div-reuse
-```
+- Old (<1.8.21):
 
-If you plan to reuse content processed by Quarto, such as cross-referenced content, make sure the filter is applied last.
+  ```yml
+  filters:
+    - quarto
+    - div-reuse
+  ```
 
-```yaml
-filters:
-  - quarto
-  - div-reuse
-```
+- New (>=1.8.21):
+
+  ```yml
+  filters:
+    - path: div-reuse
+      at: post-quarto
+  ```
 
 Then, you can reuse any fenced div by using their ID in the following way:
 
