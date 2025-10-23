@@ -9,10 +9,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,12 +26,16 @@
 --- @type table<string, table>
 local div_contents = {}
 
+--- Track reuse chain to detect circular references.
+--- @type table<string, boolean>
+local reuse_chain = {}
+
 --- Collect divs with identifiers for later reuse.
 --- Stores div content in the div_contents table indexed by the div's identifier.
 ---
 --- @param el pandoc.Div The div element to collect
 --- @return pandoc.Div The unchanged div element
-function collect_divs(el)
+local function collect_divs(el)
   if el.identifier ~= "" then
     div_contents[el.identifier] = el.content
   end
@@ -62,15 +66,29 @@ end
 --- Replace div content with content from a referenced div.
 --- If a div has a "reuse" attribute, replaces its content with the content
 --- from the div identified by that attribute. Warns if the reused content
---- contains divs with identifiers, as this may cause issues.
+--- contains divs with identifiers, as this may cause issues. Detects and prevents
+--- circular references.
 ---
 --- @param el pandoc.Div The div element to potentially replace
 --- @return pandoc.Div The div with replaced content or the original div
-function replace_divs(el)
+local function replace_divs(el)
   if el.attributes["reuse"] then
     --- @type string The identifier of the div to reuse
     local ref_id = el.attributes["reuse"]
+
+    -- Check for circular reference
+    if reuse_chain[ref_id] then
+      quarto.log.warning(
+        '[div-reuse] Circular reference detected: Div "' .. ref_id ..
+        '" is already in the reuse chain. Skipping to prevent infinite loop.'
+      )
+      return el
+    end
+
     if div_contents[ref_id] then
+      -- Add to reuse chain before processing
+      reuse_chain[ref_id] = true
+
       el.content = div_contents[ref_id]
       --- @type integer Number of divs with identifiers in reused content
       local total_identifiers = find_identifiers(el.content, ref_id)
@@ -81,6 +99,9 @@ function replace_divs(el)
           '" has been reused but contains ' .. total_identifiers .. ' Div(s) with an identifier.'
         )
       end
+
+      -- Remove from reuse chain after processing
+      reuse_chain[ref_id] = nil
     end
   end
   return el
