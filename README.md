@@ -2,16 +2,17 @@
 
 This is a Quarto extension applying the concept of "code reuse" to the content of a Markdown fenced div.
 
-## Installing
+## Installation
 
 ```bash
 quarto add mcanouil/quarto-div-reuse
 ```
 
 This will install the extension under the `_extensions` subdirectory.
+
 If you're using version control, you will want to check in this directory.
 
-## Using
+## Usage
 
 To activate the filter, add the following to your YAML front matter:
 
