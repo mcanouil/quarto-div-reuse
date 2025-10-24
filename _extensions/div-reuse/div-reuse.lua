@@ -23,10 +23,10 @@
 ]]
 
 --- Extension name constant
-local EXTENSION_NAME = "div-reuse"
+local EXTENSION_NAME = 'div-reuse'
 
 --- Load utils module
-local utils = require(quarto.utils.resolve_path("_modules/utils.lua"):gsub("%.lua$", ""))
+local utils = require(quarto.utils.resolve_path('_modules/utils.lua'):gsub('%.lua$', ''))
 
 --- Storage for div contents indexed by identifier.
 --- @type table<string, table>
@@ -42,7 +42,7 @@ local reuse_chain = {}
 --- @param el pandoc.Div The div element to collect
 --- @return pandoc.Div The unchanged div element
 local function collect_divs(el)
-  if el.identifier ~= "" then
+  if el.identifier ~= '' then
     div_contents[el.identifier] = el.content
   end
   return el
@@ -59,7 +59,7 @@ local function find_identifiers(content, ref_id)
   --- @type integer Count of divs with identifiers
   local identifier_found = 0
   for _, inner_el in ipairs(content) do
-    if inner_el.t == "Div" and inner_el.identifier ~= "" then
+    if inner_el.t == 'Div' and inner_el.identifier ~= '' then
       identifier_found = identifier_found + 1
     end
     if inner_el.content then
@@ -78,9 +78,9 @@ end
 --- @param el pandoc.Div The div element to potentially replace
 --- @return pandoc.Div The div with replaced content or the original div
 local function replace_divs(el)
-  if el.attributes["reuse"] then
+  if el.attributes['reuse'] then
     --- @type string The identifier of the div to reuse
-    local ref_id = el.attributes["reuse"]
+    local ref_id = el.attributes['reuse']
 
     -- Check for circular reference
     if reuse_chain[ref_id] then
