@@ -33,24 +33,107 @@ execute:
   echo: true
 ---
 
-## Section 1
+This is a Quarto extension applying the concept of "code reuse" to the content of a Markdown fenced div.
 
-::: {reuse="lipsum"}
+## Installation
+
+```bash
+quarto add mcanouil/quarto-div-reuse
+```
+
+This will install the extension under the `_extensions` subdirectory.
+
+If you're using version control, you will want to check in this directory.
+
+## Usage
+
+To activate the filter, add the following to your YAML front matter:
+
+- Old (<1.8.21):
+
+  ```yml
+  filters:
+    - quarto
+    - div-reuse
+  ```
+
+- New (>=1.8.21):
+
+  ```yml
+  filters:
+    - path: div-reuse
+      at: post-quarto
+  ```
+
+Then, you can reuse any fenced div by using their ID in the following way:
+
+```markdown
+## Original Div
+
+:::: {#my-div}
+{{< lipsum >}}
 :::
 
-## Section 2
+## Reused Div
 
-::: {#placeholder}
+:::: {reuse="my-div"}
+:::
+```
+
+:::: {.callout-important}
+
+The "reuse" attribute acts like a copy-paste of the original `div` content.
+
+Consequently, content and their attributes, including the ID, are duplicated.
+
+This can result in unexpected behaviour if the same ID is used multiple times within the same document.
+
+Therefore, it is recommended to use the "reuse" attribute primarily with text content.
+
+:::
+
+## Examples
+
+### Example 1
+
+```markdown
+:::: {reuse="lipsum"}
+:::
+```
+
+:::: {reuse="lipsum"}
+:::
+
+### Example 2
+
+```markdown
+:::: {#placeholder}
+![]({{< placeholder >}})
+:::
+```
+
+:::: {#placeholder}
 ![]({{< placeholder >}})
 :::
 
-## Section 3
+### Example 3
 
-::: {reuse="placeholder"}
+```markdown
+:::: {reuse="placeholder"}
+:::
+```
+
+:::: {reuse="placeholder"}
 :::
 
-## Section 4
+### Example 4
 
-::: {#lipsum}
+```markdown
+:::: {#lipsum}
+{{< lipsum 1 >}}
+:::
+```
+
+:::: {#lipsum}
 {{< lipsum 1 >}}
 :::

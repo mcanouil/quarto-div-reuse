@@ -5,4 +5,10 @@ _quarto.yml
 *.pdf
 *.docx
 *.pptx
+*.tex
+*.aux
+*.log
+*.vrb
+*.typ
 *_files/
+**/*.quarto_ipynb
