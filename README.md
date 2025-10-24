@@ -58,7 +58,7 @@ Then, you can reuse any fenced div by using their ID in the following way:
 
 Here is the source code for a minimal example: [example.qmd](example.qmd).
 
-Outputs of `example.qmd`:
+Output of `example.qmd`:
 
 - [HTML](https://m.canouil.dev/quarto-div-reuse/)
 - [Typst/PDF](https://m.canouil.dev/quarto-div-reuse/div-reuse-typst.pdf)
