@@ -1,11 +1,16 @@
 ---
 title: "Div Reuse Quarto Extension"
-filters:
-  - div-reuse
+subtitle: "Quarto Extension"
+author:
+  - name: "Mickaël CANOUIL, _Ph.D._"
+    orcid: "0000-0002-3396-4549"
+    url: "https://mickael.canouil.fr"
 format:
   html:
     output-file: index
+    toc: true
     code-tools: true
+    embed-resources: true
   typst:
     output-file: div-reuse-typst
     papersize: a4
@@ -22,15 +27,17 @@ format:
     output-file: div-reuse-docx
   revealjs:
     output-file: div-reuse-revealjs
+    embed-resources: true
   beamer:
     output-file: div-reuse-beamer
     aspectratio: 169
   pptx:
     output-file: div-reuse-pptx
 format-links: true
-embed-resources: true
 execute:
   echo: true
+filters:
+  - div-reuse
 ---
 
 This is a Quarto extension applying the concept of "code reuse" to the content of a Markdown fenced div.
