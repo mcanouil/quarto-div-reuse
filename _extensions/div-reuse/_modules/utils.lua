@@ -70,6 +70,15 @@ function utils_module.split(str, sep)
   return fields
 end
 
+--- Trim leading and trailing whitespace from a string
+--- @param str string The string to trim
+--- @return string The trimmed string
+--- @usage local trimmed = utils_module.trim("  hello world  ") -- returns "hello world"
+function utils_module.trim(str)
+  if str == nil then return '' end
+  return str:match('^%s*(.-)%s*$')
+end
+
 --- Escape special LaTeX characters in text.
 --- @param text string The text to escape
 --- @return string The escaped text safe for LaTeX
