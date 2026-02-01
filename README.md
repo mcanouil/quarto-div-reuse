@@ -5,7 +5,7 @@ This is a Quarto extension applying the concept of "code reuse" to the content o
 ## Installation
 
 ```bash
-quarto add mcanouil/quarto-div-reuse
+quarto add mcanouil/quarto-div-reuse@1.1.1
 ```
 
 This will install the extension under the `_extensions` subdirectory.
