@@ -36,6 +36,10 @@ local div_contents = {}
 --- @type table<string, boolean>
 local reuse_chain = {}
 
+--- Track which div identifiers have already shown the nested-identifier warning.
+--- @type table<string, boolean>
+local identifier_warning_shown = {}
+
 --- Collect divs with identifiers for later reuse.
 --- Stores div content in the div_contents table indexed by the div's identifier.
 ---
@@ -99,7 +103,8 @@ local function replace_divs(el)
       el.content = div_contents[ref_id]
       --- @type integer Number of divs with identifiers in reused content
       local total_identifiers = find_identifiers(el.content, ref_id)
-      if total_identifiers > 0 then
+      if total_identifiers > 0 and not identifier_warning_shown[ref_id] then
+        identifier_warning_shown[ref_id] = true
         utils.log_warning(
           EXTENSION_NAME,
           'Div "' .. ref_id .. '" has been reused but contains ' ..
