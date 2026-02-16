@@ -1,0 +1,10 @@
+# _schema.yml for "div-reuse" filter extension
+# Describes element attributes for IDE tooling and runtime validation.
+
+# Element attributes accepted by the filter on Div elements.
+# Used in: ::: {#target reuse="source-id"}
+element-attributes:
+  _any:
+    reuse:
+      type: string
+      description: "Identifier of another div whose content should replace this div's content."
