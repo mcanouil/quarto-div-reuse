@@ -3,6 +3,9 @@
 
 # Element attributes accepted by the filter on Div elements.
 # Used in: ::: {#target reuse="source-id"}
+
+$schema: https://m.canouil.dev/quarto-wizard/assets/schema/v1/extension-schema.json
+
 element-attributes:
   _any:
     reuse:
