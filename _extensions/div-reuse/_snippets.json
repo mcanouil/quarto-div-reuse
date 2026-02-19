@@ -1,0 +1,12 @@
+{
+	"Define reusable div": {
+		"prefix": "div-source",
+		"body": ["::: {#${1:my-div}}", "${2:Content to reuse.}", ":::"],
+		"description": "Define a named div for reuse"
+	},
+	"Reuse a div": {
+		"prefix": "div-reuse",
+		"body": ["::: {reuse=\"${1:my-div}\"}", ":::"],
+		"description": "Reuse the content of a previously defined div by ID"
+	}
+}
