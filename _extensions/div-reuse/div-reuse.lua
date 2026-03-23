@@ -6,8 +6,8 @@
 --- Extension name constant
 local EXTENSION_NAME = 'div-reuse'
 
---- Load utils module
-local utils = require(quarto.utils.resolve_path('_modules/utils.lua'):gsub('%.lua$', ''))
+--- Load modules
+local log = require(quarto.utils.resolve_path('_modules/logging.lua'):gsub('%.lua$', ''))
 
 --- Storage for div contents indexed by identifier.
 --- @type table<string, table>
@@ -69,7 +69,7 @@ local function replace_divs(el)
 
     -- Check for circular reference
     if reuse_chain[ref_id] then
-      utils.log_warning(
+      log.log_warning(
         EXTENSION_NAME,
         'Circular reference detected: Div "' .. ref_id ..
         '" is already in the reuse chain. Skipping to prevent infinite loop.'
@@ -86,7 +86,7 @@ local function replace_divs(el)
       local total_identifiers = find_identifiers(el.content, ref_id)
       if total_identifiers > 0 and not identifier_warning_shown[ref_id] then
         identifier_warning_shown[ref_id] = true
-        utils.log_warning(
+        log.log_warning(
           EXTENSION_NAME,
           'Div "' .. ref_id .. '" has been reused but contains ' ..
           total_identifiers .. ' Div(s) with an identifier.'
