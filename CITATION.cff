@@ -9,5 +9,5 @@ authors:
 repository-code: "https://github.com/mcanouil/quarto-div-reuse"
 url: "http://m.canouil.dev/quarto-div-reuse/"
 license: "MIT"
-date-released: "2026-03-23"
-version: 1.3.0
+date-released: "2026-04-15"
+version: 1.3.1
