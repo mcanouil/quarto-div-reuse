@@ -169,36 +169,23 @@ end
 --- @return table The walked content
 local function apply_variable_substitution(content, variables)
   if variables == nil then return content end
+  --- Mutate `el.text` in place when a substitution occurs; return el on change, nil otherwise.
+  local function substitute_text_field(el)
+    local replaced = substitute_str_text(el.text, variables)
+    if replaced == nil then return nil end
+    el.text = replaced
+    return el
+  end
   return pandoc.Blocks(content):walk({
     Str = function(str)
       local replaced = substitute_str_text(str.text, variables)
       if replaced == nil then return nil end
       return pandoc.Str(replaced)
     end,
-    Code = function(code)
-      local replaced = substitute_str_text(code.text, variables)
-      if replaced == nil then return nil end
-      code.text = replaced
-      return code
-    end,
-    CodeBlock = function(block)
-      local replaced = substitute_str_text(block.text, variables)
-      if replaced == nil then return nil end
-      block.text = replaced
-      return block
-    end,
-    RawInline = function(raw)
-      local replaced = substitute_str_text(raw.text, variables)
-      if replaced == nil then return nil end
-      raw.text = replaced
-      return raw
-    end,
-    RawBlock = function(raw)
-      local replaced = substitute_str_text(raw.text, variables)
-      if replaced == nil then return nil end
-      raw.text = replaced
-      return raw
-    end,
+    Code = substitute_text_field,
+    CodeBlock = substitute_text_field,
+    RawInline = substitute_text_field,
+    RawBlock = substitute_text_field,
   })
 end
 
@@ -222,11 +209,7 @@ local function apply_heading_shift(content, shift, ref_id)
             '" clamped to the [1, 6] range.'
           )
         end
-        if new_level < 1 then
-          new_level = 1
-        else
-          new_level = 6
-        end
+        new_level = math.max(1, math.min(6, new_level))
       end
       header.level = new_level
       return header
@@ -314,18 +297,27 @@ local function find_identifiers(content)
   return identifier_found
 end
 
+--- Look up a key inside the `div-reuse` metadata namespace.
+--- Accepts either `div-reuse.<key>` or `extensions.div-reuse.<key>`.
+--- @param meta table Document metadata
+--- @param key string The key inside the namespace
+--- @return any|nil The raw metadata value or nil when unset
+local function read_namespace_key(meta, key)
+  if meta['div-reuse'] and meta['div-reuse'][key] ~= nil then
+    return meta['div-reuse'][key]
+  end
+  if meta.extensions and meta.extensions[EXTENSION_NAME]
+      and meta.extensions[EXTENSION_NAME][key] ~= nil then
+    return meta.extensions[EXTENSION_NAME][key]
+  end
+  return nil
+end
+
 --- Read the document-level reuse limit from metadata.
---- Accepts either `div-reuse.limit` or `extensions.div-reuse.limit`.
 --- @param meta table Document metadata
 --- @return integer|nil The numeric limit or nil when unset
 local function read_reuse_limit(meta)
-  local raw = nil
-  if meta['div-reuse'] and meta['div-reuse'].limit ~= nil then
-    raw = meta['div-reuse'].limit
-  elseif meta.extensions and meta.extensions[EXTENSION_NAME]
-      and meta.extensions[EXTENSION_NAME].limit ~= nil then
-    raw = meta.extensions[EXTENSION_NAME].limit
-  end
+  local raw = read_namespace_key(meta, 'limit')
   if raw == nil then return nil end
   local value = tonumber(pandoc.utils.stringify(raw))
   if value == nil or value < 0 then
@@ -340,7 +332,6 @@ local function read_reuse_limit(meta)
 end
 
 --- Document-level variables namespace for `{{variable}}` substitution.
---- Variables come from `div-reuse.vars` (preferred) or `extensions.div-reuse.vars`.
 --- @type table|nil
 local document_variables = nil
 
@@ -348,14 +339,7 @@ local document_variables = nil
 --- @param meta table Document metadata
 --- @return table|nil The variables table or nil when unset
 local function read_variables(meta)
-  if meta['div-reuse'] and meta['div-reuse'].vars then
-    return meta['div-reuse'].vars
-  end
-  if meta.extensions and meta.extensions[EXTENSION_NAME]
-      and meta.extensions[EXTENSION_NAME].vars then
-    return meta.extensions[EXTENSION_NAME].vars
-  end
-  return nil
+  return read_namespace_key(meta, 'vars')
 end
 
 --- Meta pass: reset state and read configuration.
