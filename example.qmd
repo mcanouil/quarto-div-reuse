@@ -84,17 +84,17 @@ Then, you can reuse any fenced div by using their ID in the following way:
 ```markdown
 ## Original Div
 
-:::: {#my-div}
+::: {#my-div}
 {{< lipsum >}}
 :::
 
 ## Reused Div
 
-:::: {reuse="my-div"}
+::: {reuse="my-div"}
 :::
 ```
 
-:::: {.callout-important}
+::: {.callout-important}
 
 The "reuse" attribute acts like a copy-paste of the original `div` content.
 
@@ -111,44 +111,44 @@ The new `reuse-filter` transforms and `{{variable}}` substitution help mitigate 
 ### Example 1
 
 ```markdown
-:::: {reuse="lipsum"}
+::: {reuse="lipsum"}
 :::
 ```
 
-:::: {reuse="lipsum"}
+::: {reuse="lipsum"}
 :::
 
 ### Example 2
 
 ```markdown
-:::: {#placeholder}
-![]({{< placeholder >}})
+::: {#placeholder}
+{{< placeholder >}}
 :::
 ```
 
-:::: {#placeholder}
-![]({{< placeholder >}})
+::: {#placeholder}
+{{< placeholder >}}
 :::
 
 ### Example 3
 
 ```markdown
-:::: {reuse="placeholder"}
+::: {reuse="placeholder"}
 :::
 ```
 
-:::: {reuse="placeholder"}
+::: {reuse="placeholder"}
 :::
 
 ### Example 4
 
 ```markdown
-:::: {#lipsum}
+::: {#lipsum}
 {{< lipsum 1 >}}
 :::
 ```
 
-:::: {#lipsum}
+::: {#lipsum}
 {{< lipsum 1 >}}
 :::
 
@@ -158,19 +158,19 @@ The new `reuse-filter` transforms and `{{variable}}` substitution help mitigate 
 Nested values are addressed with dotted paths.
 
 ```markdown
-:::: {#welcome}
+::: {#welcome}
 Welcome to {{project}}, brought to you by {{author.name}} in {{year}}.
 :::
 
-:::: {reuse="welcome"}
+::: {reuse="welcome"}
 :::
 ```
 
-:::: {#welcome}
+::: {#welcome}
 Welcome to {{project}}, brought to you by {{author.name}} in {{year}}.
 :::
 
-:::: {reuse="welcome"}
+::: {reuse="welcome"}
 :::
 
 ### Example 6: partial reuse with `reuse-take`
@@ -178,7 +178,7 @@ Welcome to {{project}}, brought to you by {{author.name}} in {{year}}.
 `reuse-take="1"` keeps only the first top-level block of the source.
 
 ```markdown
-:::: {#multi}
+::: {#multi}
 First paragraph kept in the partial reuse below.
 
 Second paragraph dropped by `reuse-take="1"`.
@@ -186,11 +186,11 @@ Second paragraph dropped by `reuse-take="1"`.
 Third paragraph also dropped.
 :::
 
-:::: {reuse="multi" reuse-take="1"}
+::: {reuse="multi" reuse-take="1"}
 :::
 ```
 
-:::: {#multi}
+::: {#multi}
 First paragraph kept in the partial reuse below.
 
 Second paragraph dropped by `reuse-take="1"`.
@@ -198,7 +198,7 @@ Second paragraph dropped by `reuse-take="1"`.
 Third paragraph also dropped.
 :::
 
-:::: {reuse="multi" reuse-take="1"}
+::: {reuse="multi" reuse-take="1"}
 :::
 
 ### Example 7: heading shift with `reuse-filter`
@@ -206,7 +206,7 @@ Third paragraph also dropped.
 `shift-headings=2` deepens every heading in the reused block by two levels, so the source's level-3 heading appears as a level-5 heading here.
 
 ```markdown
-:::: {#section-block}
+::: {#section-block}
 ### Source-level heading
 
 Some paragraph under the source heading.
@@ -216,11 +216,11 @@ Some paragraph under the source heading.
 Paragraph under the sub-heading.
 :::
 
-:::: {reuse="section-block" reuse-filter="shift-headings=2"}
+::: {reuse="section-block" reuse-filter="shift-headings=2"}
 :::
 ```
 
-:::: {#section-block}
+::: {#section-block}
 ### Source-level heading
 
 Some paragraph under the source heading.
@@ -230,7 +230,7 @@ Some paragraph under the source heading.
 Paragraph under the sub-heading.
 :::
 
-:::: {reuse="section-block" reuse-filter="shift-headings=2"}
+::: {reuse="section-block" reuse-filter="shift-headings=2"}
 :::
 
 ### Example 8: identifier remap
@@ -238,23 +238,23 @@ Paragraph under the sub-heading.
 The inner div identifier is remapped on reuse to avoid duplicate identifiers.
 
 ```markdown
-:::: {#labelled}
+::: {#labelled}
 ::: {#label-source}
 Content tagged with `#label-source`.
 :::
 :::
 
-:::: {reuse="labelled" reuse-filter="id-remap=label-source->label-copy"}
+::: {reuse="labelled" reuse-filter="id-remap=label-source->label-copy"}
 :::
 ```
 
-:::: {#labelled}
+::: {#labelled}
 ::: {#label-source}
 Content tagged with `#label-source`.
 :::
 :::
 
-:::: {reuse="labelled" reuse-filter="id-remap=label-source->label-copy"}
+::: {reuse="labelled" reuse-filter="id-remap=label-source->label-copy"}
 :::
 
 ### Example 9: reusing into a class-bearing div
@@ -262,22 +262,22 @@ Content tagged with `#label-source`.
 The destination div keeps its own classes and attributes; only its children are replaced by the source content.
 
 ```markdown
-:::: {#card-body}
+::: {#card-body}
 Remember to commit early and often.
 :::
 
-:::: {.bordered .p-3 reuse="card-body"}
+::: {.bordered .p-3 reuse="card-body"}
 :::
 ```
 
-:::: {#card-body}
+::: {#card-body}
 Remember to commit early and often.
 :::
 
-:::: {.bordered .p-3 reuse="card-body"}
+::: {.bordered .p-3 reuse="card-body"}
 :::
 
-:::: {.callout-note}
+::: {.callout-note}
 
 Quarto's smart callouts (`.callout-tip`, `.callout-note`, ...) are expanded before user filters run, so a `reuse` attribute on a `.callout-*` div fills the underlying div but not the rendered callout body.
 
@@ -290,9 +290,9 @@ To reuse content into a callout, wrap the reuse site in plain markdown and place
 With `div-reuse.limit: 1`, the second reuse of `#welcome` (Example 5 used its single allowance) is skipped with a warning and the destination div is left empty.
 
 ```markdown
-:::: {reuse="welcome"}
+::: {reuse="welcome"}
 :::
 ```
 
-:::: {reuse="welcome"}
+::: {reuse="welcome"}
 :::
