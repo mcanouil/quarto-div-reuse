@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.4.0 (2026-05-31)
+
 ### New Features
 
 - feat: Add `reuse-filter` attribute that transforms reused content with `shift-headings=N`, `take=N`, and `id-remap=old->new` key/value pairs.
