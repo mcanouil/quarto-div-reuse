@@ -1,0 +1,192 @@
+---
+title: "Examples"
+subtitle: "Every transform, rendered."
+description: "One source div reused several ways by the extension: plain, shifted, truncated, remapped, into a styled container, and with variables filled in."
+---
+
+Everything below is produced by the filter as this page is rendered, from the sources defined at the top.
+This site configures the extension in `_quarto.yml`:
+
+```yaml
+div-reuse:
+  limit: 3
+  vars:
+    project: "Quarto Extensions"
+    author:
+      name: "Mickaël Canouil"
+```
+
+## The sources
+
+Two divs, defined once and reused throughout the page.
+
+````markdown
+::: {#house-style}
+Commit early, commit often, and write the message for the reader.
+:::
+
+::: {#report}
+# Findings
+
+The first top-level block of the report.
+
+## Method
+
+The second heading, so shifting has something to move.
+
+::: {#report-note}
+A nested div with an identifier of its own.
+:::
+::::
+````
+
+::: {#house-style}
+Commit early, commit often, and write the message for the reader.
+:::
+
+:::: {#report}
+# Findings
+
+The first top-level block of the report.
+
+## Method
+
+The second heading, so shifting has something to move.
+
+::: {#report-note}
+A nested div with an identifier of its own.
+:::
+::::
+
+## A plain reuse
+
+```markdown
+::: {reuse="house-style"}
+:::
+```
+
+::: {.border .rounded .p-3}
+
+::: {reuse="house-style"}
+:::
+
+:::
+
+## Shifting headings
+
+The report starts at level one, which would sit above the headings on this page.
+
+```markdown
+::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="2"}
+:::
+```
+
+::: {.border .rounded .p-3}
+
+::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="2"}
+:::
+
+:::
+
+Level one becomes level four and level two becomes level five, so both sit under this section.
+
+## Taking part of it
+
+`reuse-take` keeps only the first few top-level blocks.
+
+```markdown
+::: {reuse="report" reuse-take="2"}
+:::
+```
+
+::: {.border .rounded .p-3}
+
+::: {reuse="report" reuse-take="2" reuse-filter="shift-headings=3"}
+:::
+
+:::
+
+The heading and the paragraph after it are kept, and everything below is dropped.
+
+## Renaming identifiers
+
+A plain reuse copies identifiers along with the content, which puts duplicates in the document.
+`id-remap` renames them on the way in.
+
+```markdown
+::: {reuse="report" reuse-filter="shift-headings=3,id-remap=report-note->report-note-copy"}
+:::
+```
+
+::: {.border .rounded .p-3}
+
+::: {reuse="report" reuse-filter="shift-headings=3,id-remap=report-note->report-note-copy"}
+:::
+
+:::
+
+The nested div arrives as `report-note-copy`, so the source keeps sole ownership of `report-note`.
+Several mappings are separated by `;`.
+
+## Reusing into a styled container
+
+The destination keeps its own classes and attributes; only its children are replaced.
+
+```markdown
+::: {.callout-tip title="House style" reuse="house-style"}
+:::
+```
+
+That one does not work, and the reference explains why: Quarto expands callouts before user filters run.
+Put the callout in the source instead:
+
+```markdown
+::: {#tip-source}
+::: {.callout-tip title="House style"}
+Commit early, commit often.
+:::
+:::
+
+::: {reuse="tip-source"}
+:::
+```
+
+:::: {#tip-source}
+::: {.callout-tip title="House style"}
+Commit early, commit often.
+:::
+::::
+
+::: {reuse="tip-source"}
+:::
+
+## Variables
+
+Tokens in the source are filled in from `div-reuse.vars` when the content is reused.
+
+```markdown
+::: {#greeting}
+Written for {{project}}, signed {{author.name}}.
+:::
+
+::: {reuse="greeting"}
+:::
+```
+
+::: {#greeting}
+Written for {{project}}, signed {{author.name}}.
+:::
+
+::: {.border .rounded .p-3}
+
+::: {reuse="greeting"}
+:::
+
+:::
+
+Dotted paths reach nested keys.
+A name with no value is left as written and warned about once.
+
+## Source
+
+The repository ships a short, standalone starting point you can copy: [`example.qmd`](https://github.com/mcanouil/quarto-div-reuse/blob/main/example.qmd).
