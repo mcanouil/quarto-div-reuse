@@ -1,0 +1,140 @@
+---
+title: "Reference"
+subtitle: "Every attribute the div-reuse extension accepts."
+description: "The complete div-reuse configuration: the reuse attributes, the three transforms, variable substitution, the reuse limit, and the callout caveat."
+---
+
+## Enabling the filter
+
+```yaml
+filters:
+  - path: div-reuse
+    at: post-quarto
+```
+
+::: {.callout-note}
+On Quarto older than 1.8.21 the positioning syntax did not exist, and the filter was ordered by hand instead:
+
+```yaml
+filters:
+  - quarto
+  - div-reuse
+```
+:::
+
+## Attributes
+
+A div carrying `reuse` has its children replaced by the children of the div named.
+
+```markdown
+::: {#source}
+The content.
+:::
+
+::: {reuse="source"}
+:::
+```
+
+| Attribute | Type | Description |
+| --- | --- | --- |
+| `reuse` | string | The identifier of the div to copy content from, written without the `#`. |
+| `reuse-filter` | string | Comma-separated `key=value` transforms applied before insertion. |
+| `reuse-take` | integer | Keeps the first N top-level blocks. A shortcut for `take=N`, and it wins over one written in `reuse-filter`. |
+
+: Attributes accepted on any div. {.striped .hover tbl-colwidths="[16,12,72]"}
+
+Only the children are replaced.
+The destination keeps its own identifier, classes, and every other attribute, so a reuse can be dropped into a styled container.
+
+## Transforms
+
+`reuse-filter` takes a comma-separated list.
+
+| Key | Form | What it does |
+| --- | --- | --- |
+| `shift-headings` | `shift-headings=N` | Moves every heading in the reused content by N levels. Positive deepens, negative promotes. |
+| `take` | `take=N` | Keeps only the first N top-level blocks. |
+| `id-remap` | `id-remap=old->new;other->another` | Renames identifiers on divs, spans, and headings. Mappings are separated by `;`. |
+
+: The transforms. {.striped .hover tbl-colwidths="[18,32,50]"}
+
+```markdown
+::: {reuse="report" reuse-filter="shift-headings=1,take=2"}
+:::
+```
+
+The transforms run in a fixed order, whatever order they are written in: `take` first, then `shift-headings`, then `id-remap`, then variable substitution.
+So `take` counts the blocks of the source, not what is left after another transform.
+
+Resulting heading levels are clamped to the range one to six, and clamping is reported with a warning.
+A key that is not one of the three is ignored.
+
+::: {.callout-important}
+`reuse` copies content and its attributes, identifiers included, so reusing a block that carries identifiers puts duplicates in the document.
+Use `id-remap` for those, rather than leaving the duplicates in place.
+
+Reused content that carries any identifier is reported with a warning, whether or not `id-remap` renamed it.
+The warning counts identifiers; it does not check them for collisions.
+:::
+
+## Where a source may sit, and what it may contain
+
+A source may be defined anywhere in the document, before or after the reuse that names it.
+The filter collects every identified div in one pass and substitutes in a second, so order on the page does not matter.
+
+A `reuse` naming an identifier that no div in the document carries leaves the destination exactly as it was written, and says nothing.
+An empty destination where content was expected usually means the identifier is misspelt.
+
+::: {.callout-important}
+Reuse does not chain.
+Sources are collected as they were written, so a `reuse` div inside a source is copied to the destination unexpanded, and arrives empty.
+Reuse the innermost source directly rather than through another.
+:::
+
+## Variables
+
+Tokens of the form `{{name}}` inside reused content are replaced from the `div-reuse.vars` namespace.
+Dotted paths reach nested keys, and whitespace inside the braces is allowed.
+
+```yaml
+div-reuse:
+  vars:
+    project: "Quarto Extensions"
+    author:
+      name: "Mickaël Canouil"
+```
+
+A name with no value is left as written, and warned about once.
+
+## Reuse limit
+
+```yaml
+div-reuse:
+  limit: 3
+```
+
+Caps how many times each source may be reused in one document.
+Reuses past the limit are skipped, with a warning.
+Unset means unlimited.
+
+## Configuration summary
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `div-reuse.limit` | integer | unlimited | Maximum reuses of each source per document. |
+| `div-reuse.vars` | object | | Values substituted for `{{name}}` tokens in reused content. |
+
+: Document and project configuration. {.striped .hover tbl-colwidths="[22,12,16,50]"}
+
+Both are read from the top level of the metadata, as written above, or from `extensions.div-reuse`.
+The top-level key wins for a key set in both places.
+
+## Limitations
+
+::: {.callout-caution}
+Quarto expands its callouts before user filters run, so `reuse` on a `.callout-tip` div fills the div underneath rather than the rendered callout body, and nothing appears.
+Put the callout inside the source div and reuse the whole thing instead.
+:::
+
+- A source has to be a fenced div with an identifier. There is no reuse of a section, a heading, or a file.
+- Reuse is a copy, not a reference: editing the source changes every reuse on the next render, but the copies are independent in the output.

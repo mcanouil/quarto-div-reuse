@@ -1,0 +1,80 @@
+---
+title: "Div Reuse"
+subtitle: "Write a block once, place it wherever it belongs."
+description: "What the div-reuse extension is for, how to enable it, and the smallest pair of a source div and a reuse that copies it."
+authors:
+  - name: "Mickaël CANOUIL, _Ph.D._"
+    orcid: "0000-0002-3396-4549"
+    url: "https://mickael.canouil.fr"
+---
+
+Code has functions, so a block of logic is written once and called from wherever it is needed.
+Prose has copy and paste, and the second copy starts drifting the moment the first is edited.
+
+`div-reuse` applies the first idea to the second problem.
+Give a fenced div an identifier, and any other div can pull its content in by name, optionally shifting its headings, taking only part of it, renaming its identifiers, or filling in variables.
+
+## Installation
+
+```bash
+quarto add {{< var extension.reference >}}
+```
+
+This will install the extension under the `_extensions` subdirectory.
+If you are using version control, you will want to check in this directory.
+
+Or install it from your editor with [Quarto Wizard](https://m.canouil.dev/quarto-wizard):
+
+::: {.btn-group role="group" aria-label="Quarto Wizard installer options"}
+
+[Visual Studio Code](vscode://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in Visual Studio Code using the Quarto Wizard extension."}
+[Positron](positron://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in Positron using the Quarto Wizard extension."}
+[VSCodium](vscodium://mcanouil.quarto-wizard/install?repo={{< var extension.wizard-reference >}}){.btn .btn-outline-primary title="Install {{< var extension.reference >}} in VSCodium using the Quarto Wizard extension."}
+
+:::
+
+## Quick start
+
+Enable the filter:
+
+```yaml
+filters:
+  - path: div-reuse
+    at: post-quarto
+```
+
+Then name a source and reuse it:
+
+```markdown
+::: {#house-style}
+Commit early, commit often, and write the message for the reader.
+:::
+
+::: {reuse="house-style"}
+:::
+```
+
+The source:
+
+::: {#house-style}
+Commit early, commit often, and write the message for the reader.
+:::
+
+And the reuse, which produces the same content again:
+
+::: {reuse="house-style"}
+:::
+
+See the [Reference](reference.qmd) for every attribute, and the [Examples](examples.qmd) for each transform rendered.
+
+## Where it works
+
+Every output format.
+The filter rewrites the document before any writer runs, so reused content behaves exactly like content you typed twice.
+
+## Links
+
+- [Reference](reference.qmd) for the full attribute list.
+- [Examples](examples.qmd) for every transform rendered.
+- [Changelog](changelog.qmd) for what each release changed.
+- [Source and issues](https://github.com/mcanouil/quarto-div-reuse) on GitHub.
