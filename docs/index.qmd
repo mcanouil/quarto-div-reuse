@@ -39,8 +39,7 @@ Enable the filter:
 
 ```yaml
 filters:
-  - path: div-reuse
-    at: post-quarto
+  - div-reuse
 ```
 
 Then name a source and reuse it:

@@ -8,8 +8,7 @@ description: "The complete div-reuse configuration: the reuse attributes, the th
 
 ```yaml
 filters:
-  - path: div-reuse
-    at: post-quarto
+  - div-reuse
 ```
 
 ::: {.callout-note}
