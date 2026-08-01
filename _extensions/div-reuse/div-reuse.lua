@@ -277,24 +277,24 @@ local function collect_divs(el)
   return el
 end
 
---- Find and count divs with identifiers within content.
---- Recursively searches through content to count divs that have identifiers,
---- which helps detect potential issues with reused content.
+--- Collect the identifiers of divs within content.
+--- Recursively searches through content and records every identifier found, so
+--- a reused copy can be compared against its source.
 ---
 --- @param content table Array of pandoc elements to search through
---- @return integer Number of divs with identifiers found in the content
-local function find_identifiers(content)
-  --- @type integer Count of divs with identifiers
-  local identifier_found = 0
+--- @param found table|nil Accumulator, keyed by identifier
+--- @return table Set of identifiers found in the content
+local function collect_identifiers(content, found)
+  found = found or {}
   for _, inner_el in ipairs(content) do
     if inner_el.t == 'Div' and inner_el.identifier ~= '' then
-      identifier_found = identifier_found + 1
+      found[inner_el.identifier] = true
     end
     if inner_el.content then
-      identifier_found = identifier_found + find_identifiers(inner_el.content)
+      collect_identifiers(inner_el.content, found)
     end
   end
-  return identifier_found
+  return found
 end
 
 --- Look up a key inside the `div-reuse` metadata namespace.
@@ -419,14 +419,27 @@ local function replace_divs(el)
 
   el.content = content
 
-  --- @type integer Number of divs with identifiers in reused content
-  local total_identifiers = find_identifiers(el.content)
-  if total_identifiers > 0 and not identifier_warning_shown[ref_id] then
+  -- The source div stays in the document, so an identifier that survives into
+  -- the copy unchanged now appears twice. One that `id-remap` renamed does not,
+  -- which is the whole point of the attribute, so it is not reported.
+  --- @type table Identifiers the source carries
+  local source_identifiers = collect_identifiers(div_contents[ref_id])
+  --- @type table Identifiers now present in both the source and the copy
+  local duplicated = {}
+  for identifier in pairs(collect_identifiers(el.content)) do
+    if source_identifiers[identifier] then
+      table.insert(duplicated, identifier)
+    end
+  end
+
+  if #duplicated > 0 and not identifier_warning_shown[ref_id] then
     identifier_warning_shown[ref_id] = true
+    table.sort(duplicated)
     log.log_warning(
       EXTENSION_NAME,
-      'Div "' .. ref_id .. '" has been reused but contains ' ..
-      total_identifiers .. ' Div(s) with an identifier.'
+      'Div "' .. ref_id .. '" has been reused and duplicates ' .. #duplicated ..
+      ' identifier(s): "' .. table.concat(duplicated, '", "') .. '". ' ..
+      'Use reuse-filter="id-remap=old->new" to rename them in the copy.'
     )
   end
 
