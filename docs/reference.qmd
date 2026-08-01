@@ -63,11 +63,32 @@ The destination keeps its own identifier, classes, and every other attribute, so
 :::
 ```
 
+The transforms run in a fixed order, whatever order they are written in: `take` first, then `shift-headings`, then `id-remap`, then variable substitution.
+So `take` counts the blocks of the source, not what is left after another transform.
+
 Resulting heading levels are clamped to the range one to six, and clamping is reported with a warning.
+A key that is not one of the three is ignored.
 
 ::: {.callout-important}
 `reuse` copies content and its attributes, identifiers included, so reusing a block that carries identifiers puts duplicates in the document.
 Use `id-remap` for those, rather than leaving the duplicates in place.
+
+Reused content that carries any identifier is reported with a warning, whether or not `id-remap` renamed it.
+The warning counts identifiers; it does not check them for collisions.
+:::
+
+## Where a source may sit, and what it may contain
+
+A source may be defined anywhere in the document, before or after the reuse that names it.
+The filter collects every identified div in one pass and substitutes in a second, so order on the page does not matter.
+
+A `reuse` naming an identifier that no div in the document carries leaves the destination exactly as it was written, and says nothing.
+An empty destination where content was expected usually means the identifier is misspelt.
+
+::: {.callout-important}
+Reuse does not chain.
+Sources are collected as they were written, so a `reuse` div inside a source is copied to the destination unexpanded, and arrives empty.
+Reuse the innermost source directly rather than through another.
 :::
 
 ## Variables
@@ -105,7 +126,8 @@ Unset means unlimited.
 
 : Document and project configuration. {.striped .hover tbl-colwidths="[22,12,16,50]"}
 
-Both sit at the top level of the metadata, not under `extensions`.
+Both are read from the top level of the metadata, as written above, or from `extensions.div-reuse`.
+The top-level key wins for a key set in both places.
 
 ## Limitations
 

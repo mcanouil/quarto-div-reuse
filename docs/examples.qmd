@@ -77,25 +77,26 @@ A nested div with an identifier of its own.
 The report starts at level one, which would sit above the headings on this page.
 
 ```markdown
-::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="2"}
+::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="4"}
 :::
 ```
 
 ::: {.border .rounded .p-3}
 
-::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="2"}
+::: {reuse="report" reuse-filter="shift-headings=3" reuse-take="4"}
 :::
 
 :::
 
 Level one becomes level four and level two becomes level five, so both sit under this section.
+`reuse-take` drops the nested div at the end of the source, which would otherwise arrive with the identifier it already has here.
 
 ## Taking part of it
 
 `reuse-take` keeps only the first few top-level blocks.
 
 ```markdown
-::: {reuse="report" reuse-take="2"}
+::: {reuse="report" reuse-take="2" reuse-filter="shift-headings=3"}
 :::
 ```
 
@@ -106,7 +107,8 @@ Level one becomes level four and level two becomes level five, so both sit under
 
 :::
 
-The heading and the paragraph after it are kept, and everything below is dropped.
+The heading and the paragraph after it are kept, and everything below is dropped, including the nested div.
+The headings are shifted here as well, to keep them under this section; `take` counts the blocks of the source, so it makes no difference which of the two is written first.
 
 ## Renaming identifiers
 
@@ -130,14 +132,28 @@ Several mappings are separated by `;`.
 
 ## Reusing into a styled container
 
-The destination keeps its own classes and attributes; only its children are replaced.
+The destination keeps its own identifier, classes, and attributes; only its children are replaced, so `reuse` can go straight on a container.
+
+```markdown
+::: {.border .rounded .p-3 reuse="house-style"}
+:::
+```
+
+::: {.border .rounded .p-3 reuse="house-style"}
+:::
+
+The framed blocks elsewhere on this page wrap the reuse in a container instead, which comes to the same thing.
+
+## Reusing into a callout
+
+A callout is the exception.
+Quarto expands its callouts before user filters run, so `reuse` on a `.callout-tip` div fills the div underneath rather than the rendered callout body, and nothing appears:
 
 ```markdown
 ::: {.callout-tip title="House style" reuse="house-style"}
 :::
 ```
 
-That one does not work, and the reference explains why: Quarto expands callouts before user filters run.
 Put the callout in the source instead:
 
 ```markdown
