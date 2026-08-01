@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.4.2 (2026-08-01)
+
 ### Bug Fixes
 
 - fix: Register the filter at `post-quarto` in the extension manifest, so listing `div-reuse` under `filters` is enough and the entry point no longer has to be named in project or document YAML.
