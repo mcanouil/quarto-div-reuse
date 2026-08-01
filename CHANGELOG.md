@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.4.1 (2026-08-01)
+
 ### Bug Fixes
 
 - fix: Warn about a duplicated identifier rather than about any identifier at all. The check counted identifiers in the copy after `id-remap` had run, so the remedy the warning exists for could never silence it. The message now names the identifiers the copy shares with its source.
