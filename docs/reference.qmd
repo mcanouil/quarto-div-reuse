@@ -73,8 +73,7 @@ A key that is not one of the three is ignored.
 `reuse` copies content and its attributes, identifiers included, so reusing a block that carries identifiers puts duplicates in the document.
 Use `id-remap` for those, rather than leaving the duplicates in place.
 
-Reused content that carries any identifier is reported with a warning, whether or not `id-remap` renamed it.
-The warning counts identifiers; it does not check them for collisions.
+The warning names the identifiers the copy shares with its source, and `id-remap` silences it for each one it renames.
 :::
 
 ## Where a source may sit, and what it may contain
