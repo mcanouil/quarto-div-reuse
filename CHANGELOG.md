@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Bug Fixes
+
+- fix: Describe `limit` and `vars` under `options` in `_schema.yml` rather than under a `metadata` section, which is not part of the extension schema, so editors complete and validate them. Target the Quarto Wizard v2 extension schema.
+
 ## 1.4.2 (2026-08-01)
 
 ### Bug Fixes
