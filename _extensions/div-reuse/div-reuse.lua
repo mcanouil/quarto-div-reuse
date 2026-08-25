@@ -1,4 +1,4 @@
---- @module div-reuse
+--- @module "div-reuse"
 --- @license MIT
 --- @copyright 2026 Mickaël Canouil
 --- @author Mickaël Canouil
