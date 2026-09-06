@@ -4,7 +4,7 @@
 
 ### New Features
 
-- feat: Check the `extensions.div-reuse` configuration against the extension schema and report what it does not accept.
+- feat: Check the `extensions.div-reuse` configuration against the extension schema and report what it does not accept. (#34)
 
 ## 1.4.3 (2026-08-02)
 
