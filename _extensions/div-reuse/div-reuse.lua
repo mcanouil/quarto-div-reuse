@@ -7,7 +7,7 @@
 local EXTENSION_NAME = 'div-reuse'
 
 --- Load shared modules.
-local log = require(quarto.utils.resolve_path('_modules/logging.lua'):gsub('%.lua$', ''))
+local log = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/logging.lua'):gsub('%.lua$', ''))
 
 --- Storage for div contents indexed by identifier.
 --- @type table<string, table>
