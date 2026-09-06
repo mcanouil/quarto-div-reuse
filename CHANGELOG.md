@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### New Features
+
+- feat: Check the `extensions.div-reuse` configuration against the extension schema and report what it does not accept.
+
 ## 1.4.3 (2026-08-02)
 
 ### Bug Fixes
