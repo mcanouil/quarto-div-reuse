@@ -7,7 +7,24 @@
 local EXTENSION_NAME = 'div-reuse'
 
 --- Load shared modules.
-local log = require(quarto.utils.resolve_path('_modules/logging.lua'):gsub('%.lua$', ''))
+local log = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/logging.lua'):gsub('%.lua$', ''))
+local schema = require(quarto.utils.resolve_path('_vendor/quarto-wizard/schema.lua'):gsub('%.lua$', ''))
+local check = require(quarto.utils.resolve_path('_vendor/quarto-lua-modules/schema-check.lua'):gsub('%.lua$', ''))
+
+--- The schema check, built once per render. It reads `_schema.yml` on the way
+--- in and checks the document configuration once.
+---
+--- The validator is injected rather than required by the check module, so the
+--- two vendored sources stay independent of where the other was placed.
+---
+--- The extension contributes a filter and no shortcode, so the check runs from
+--- the `Meta` handler, which is the only place the document configuration is
+--- read. It reads `extensions.div-reuse`, while this extension also accepts a
+--- top-level `div-reuse` key that the check cannot see.
+---
+--- A schema that cannot be read is reported by the module as an error and the
+--- render carries on: a configuration file must not stop a document.
+local checker = check.new(schema, EXTENSION_NAME)
 
 --- Storage for div contents indexed by identifier.
 --- @type table<string, table>
@@ -347,6 +364,7 @@ end
 --- @return table The unchanged metadata
 local function read_meta(meta)
   reset_state()
+  checker:options(meta)
   document_reuse_limit = read_reuse_limit(meta)
   document_variables = read_variables(meta)
   return meta
