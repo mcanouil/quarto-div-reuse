@@ -5,7 +5,7 @@
 ## Installation
 
 ```bash
-quarto add mcanouil/quarto-div-reuse@1.4.3
+quarto add mcanouil/quarto-div-reuse@1.5.0
 ```
 
 This will install the extension under the `_extensions` subdirectory.
