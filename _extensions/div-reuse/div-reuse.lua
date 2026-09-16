@@ -381,10 +381,12 @@ end
 --- @param el pandoc.Div The div element to potentially replace
 --- @return pandoc.Div The div with replaced content or the original div
 local function replace_divs(el)
-  if not el.attributes['reuse'] then return el end
+  --- @type table<string, any> The div's own attributes, resolved against the schema
+  local resolved = checker:attributes(el.attributes, nil) or {}
+  if not resolved['reuse'] then return el end
 
   --- @type string The identifier of the div to reuse
-  local ref_id = el.attributes['reuse']
+  local ref_id = resolved['reuse']
 
   if reuse_chain[ref_id] then
     log.log_warning(
@@ -416,10 +418,15 @@ local function replace_divs(el)
   local content = clone_blocks(div_contents[ref_id])
 
   --- @type table Parsed reuse-filter options
-  local filter_options = parse_filter_attribute(el.attributes['reuse-filter'])
+  local filter_options = parse_filter_attribute(resolved['reuse-filter'])
+
+  --- @type any Raw value read for reuse-take, whatever type it resolved to
+  local take_value = resolved['reuse-take']
 
   --- @type integer|nil Take override from the dedicated attribute
-  local take_attr = tonumber(el.attributes['reuse-take'])
+  --- A value the schema rejects comes back as the string the document wrote,
+  --- not as nil, so the type must be checked rather than relying on tonumber.
+  local take_attr = type(take_value) == 'number' and take_value or nil
   if take_attr ~= nil then filter_options.take = take_attr end
 
   if filter_options.take ~= nil then
