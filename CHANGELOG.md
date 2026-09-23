@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.5.1 (2026-09-23)
+
 ### Bug Fixes
 
 - fix: Read the reuse attributes through the schema, so a rejected reuse-take value is named once instead of being dropped in silence. (#41)
